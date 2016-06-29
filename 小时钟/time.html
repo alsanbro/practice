@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>小时钟</title>
+	<style type="text/css">
+		body{
+			padding:50px;
+
+		}
+		#timediv{
+			background:#000;
+			color:#fff;
+			height:40px;
+			width:100px;
+			line-height: 40px;
+			text-align: center;
+			font-weight: 700;
+			margin:0 auto;
+		}
+	</style>
+</head>
+<body>
+	<div id="timediv"></div>
+</body>
+	<script type="text/javascript">
+		var timediv=document.getElementById('timediv');
+		function fn(){
+			var time=new Date().toLocaleString();
+			alert(time.split(' ')[1]);
+			timediv.innerHTML=time.split(' ')[1].slice(2);
+		}
+		fn();
+		setInterval(fn,1000);
+		
+	</script>
+</html>
