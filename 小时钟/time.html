@@ -28,7 +28,6 @@
 		var timediv=document.getElementById('timediv');
 		function fn(){
 			var time=new Date().toLocaleString();
-			alert(time.split(' ')[1]);
 			timediv.innerHTML=time.split(' ')[1].slice(2);
 		}
 		fn();

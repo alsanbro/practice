@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="referrer" content="no-referrer">
+		<title>Music random</title>
+		<link rel="stylesheet" href="http://at.alicdn.com/t/font_1467024049_9811914.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script src="http://o7m41tvmg.bkt.clouddn.com/jquery-1.12.4.min.js"></script>
+		<script src="js/index.js"></script>
+	</head>
+	<body>
+		<div id="wx_logo">
+			<img src="" alt="musicicon" style="display:none;" >
+		</div>
+		<div class="wrapper">
+			<div class="background"></div>
+			<div class="content">
+				<audio src=""></audio>
+				<div class="music-message">
+					<p class="musicname"></p>
+					<p class="musicer"></p>
+				</div>
+				<div class="music-icon">
+					<a class="m-icon m-fenxiang colored" href="http://service.weibo.com/share/share.php?title=#_loginLayer_1466697157538" target="new"></a>
+					<span class="m-icon m-star colored"></span>
+					<span class="m-icon m-heart colored"></span>
+				</div>
+			</div>
+			<div class="basebar">
+				<span class="progressbar"></span>
+			</div>
+			<div class="controls">
+				<div class="play-control">
+					<span class="m-icon m-play btn1" title="播放/暂停"></span>
+					<span class="m-icon m-change btn2" title="换频道"></span>
+					<span class="m-icon m-next btn3" title="换曲"></span>
+				</div>
+				<div class="music-control">
+					<span class="m-icon m-xunhuan colored" ></span>
+					<span class="m-icon m-radom colored"></span>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//播放控制
+			var myAudio=$('audio')[0];
+			$('.btn1').click(function(){
+				if (myAudio.paused) {
+					play();
+				}else{
+					myAudio.pause();
+					$(this).removeClass('m-pause').addClass('m-play');
+				}
+			});
+
+			function play(){
+				myAudio.play();
+				$('.btn1').removeClass('m-play').addClass('m-pause');
+			}
+
+			$('.btn3').click(function(){
+				getmusic();
+			})
+
+			var channelId=1;
+			$('.btn2').click(function(){
+				channelId=Math.floor(Math.random()*34);
+				getmusic();
+				console.log(channelId);
+			})
+			console.log(channelId);
+
+			function getmusic(){
+				$.ajax({
+					url: 'http://api.jirengu.com/fm/getSong.php',
+					dataType: 'json',
+					method: 'get',
+					data: {'channel': channelId},
+					success:function(ret){
+						var resource=ret.song[0],
+							url=resource.url,
+							bgPic=resource.picture,
+							sid=resource.sid,
+							ssid=resource.ssid,
+							title=resource.title,
+							author=resource.artist;
+						$('audio').attr('src',url);
+						$('.musicname').text(title);
+						$('.musicer').text(author);
+						$('.background').css({
+							'background':'url('+bgPic+')',
+							'background-repeat':'no-repeat',
+							'background-position':'center',
+							'background-size':'cover',
+						})
+						play();
+					}
+
+				})				
+			}
+
+			//进度条控制
+			setInterval(present,500);
+			$('.basebar').mousedown(function(e){
+				var posX=e.clientX;
+				var targetLeft=$(this).offset().left;
+				var percentage=(posX-targetLeft)/400*100;
+				myAudio.currentTime=myAudio.duration*percentage/100;
+			})
+
+			function present(){
+				var length=myAudio.currentTime/myAudio.duration*100;
+				$('.progressbar').width(length+"%");
+				if (myAudio.currentTime==myAudio.duration) {
+					getmusic()
+				}
+			}
+
+			//icon
+			$('.m-star').on('click',function(){
+				$(this).toggleClass('stared').toggleClass('colored');
+			});
+			$('.m-heart').on('click',function(){
+				$(this).toggleClass('loved').toggleClass('colored');
+			});
+			$(document).ready(getmusic());
+		</script>
+	</body>
+</html>
